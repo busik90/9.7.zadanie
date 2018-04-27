@@ -1,3 +1,8 @@
 .container {
   margin: 25px auto;
 }
+
+#js-resultsTableElement > .row {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
