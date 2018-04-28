@@ -1,8 +1,48 @@
 .container {
-  margin: 25px auto;
+	margin: 25px auto;
 }
 
 #js-resultsTableElement > .row {
-  margin-top: 10px;
-  margin-bottom: 10px;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+#js-resultsTableElement > .row span {
+	padding: 5px 10px;
+	border-radius: 15px;
+}
+
+.result-row span {
+	color: white;
+}
+
+.base-res {
+	display: inline-block;
+	width: 130px;
+}
+
+.start-res {
+	border: 1px solid #666;
+	background-color: #777;
+}
+
+.win {
+	background-color: green;
+	border-color: darkgreen;
+}
+
+.lose {
+	background-color: red;
+	border-color: darkred;
+}
+
+.remis {
+	background-color: darkorange;
+	border-color: rgb(179, 98, 0);
+}
+
+.win,
+.lose,
+.remis {
+	transition: all .4s;
 }
