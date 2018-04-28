@@ -3,10 +3,12 @@
 // Elementy gry/strony
 var newGameElem = document.getElementById('js-newGameElement'),
 		pickElem = document.getElementById('js-playerPickElement'),
-		resultsElem = document.getElementById('js-resultsTableElement');
+		resultsElem = document.getElementById('js-resultsTableElement'),
+		resetElem = document.getElementById('js-resetGameElement');
 
 // Przycisk "New game" i "Reset game"
-var newGameBtn = document.getElementById('js-newGameButton');
+var newGameBtn = document.getElementById('js-newGameButton'),
+		resetGameBtn = document.getElementById('js-resetGameButton');
 
 // Przyciski kamień, papier, nożyce
 var pickRock = document.getElementById('js-playerPick_rock'),
@@ -35,6 +37,7 @@ var defaultPlayerResultText = playerResultElem.innerHTML,
 
 // Przycisk nowa gra
 newGameBtn.addEventListener('click', newGame);
+resetGameBtn.addEventListener('click', resetGame);
 		
 // Wybór gracza między papierem, kamieniem i nożycami
 pickRock.addEventListener('click', function() { playerPick('rock') });
@@ -64,6 +67,7 @@ function setGameElements() {
 			newGameElem.style.display = 'none';
 			pickElem.style.display = 'block';
 			resultsElem.style.display = 'block';
+			resetElem.style.display = 'block';
 			break;
 		case 'ended':
 			newGameBtn.innerText = 'Jeszcze raz';
@@ -74,6 +78,7 @@ function setGameElements() {
 			newGameElem.style.display = 'block';
 			pickElem.style.display = 'none';
 			resultsElem.style.display = 'none';
+			resetElem.style.display = 'none';
 	}
 }
 
@@ -91,7 +96,6 @@ function newGame() {
 		gameState = 'started';
 
 		resetGame();
-		setGamePoints();
 		setGameElements();
 	}
 }
@@ -106,6 +110,8 @@ function resetGame() {
 
 	playerResultElem.className = computerResultElem.className = 'base-res start-res';
 	remisResultElem.className = '';
+
+	setGamePoints();
 }
 
 // Ustaw/wyświetl punkty. Pełni funkcje wyzerowania punktów przed kolejną rozgrywką.
