@@ -2,15 +2,15 @@
 
 // Elementy gry/strony
 var newGameElem = document.getElementById('js-newGameElement'),
-    pickElem = document.getElementById('js-playerPickElement'),
-    resultsElem = document.getElementById('js-resultsTableElement');
+		pickElem = document.getElementById('js-playerPickElement'),
+		resultsElem = document.getElementById('js-resultsTableElement');
 
-// Przycisk "New game"
+// Przycisk "New game" i "Reset game"
 var newGameBtn = document.getElementById('js-newGameButton');
 
 // Przyciski kamień, papier, nożyce
 var pickRock = document.getElementById('js-playerPick_rock'),
-    pickPaper = document.getElementById('js-playerPick_paper'),
+		pickPaper = document.getElementById('js-playerPick_paper'),
 		pickScissors = document.getElementById('js-playerPick_scissors');
 
 // Dane graczy oraz zdobyte punkty
@@ -18,13 +18,18 @@ var playerNameElem = document.getElementById('js-playerName'),
 		playerPointsElem = document.getElementById('js-playerPoints'),
 		computerPointsElem = document.getElementById('js-computerPoints');
 
-// Wybrana opcja przez gracza/komputer oraz wynik rundy
+// Wybrana opcja przez gracza/komputer
 var playerPickElem = document.getElementById('js-playerPick'),
-    computerPickElem = document.getElementById('js-computerPick'),
-    playerResultElem = document.getElementById('js-playerResult'),
-		computerResultElem = document.getElementById('js-computerResult');
+		computerPickElem = document.getElementById('js-computerPick');
+
+// Wynik rundy
+var playerResultElem = document.getElementById('js-playerResult'),
+		computerResultElem = document.getElementById('js-computerResult')
 		remisResultElem = document.getElementById('js-remisResult');
 
+// Domyślny tekst w polu z wynikiem rundy ('result')
+var defaultPlayerResultText = playerResultElem.innerHTML,
+		defaultComputerResultText = computerResultElem.innerHTML;
 
 /*----- Nasłuchiwanie kliknięcia w obiekt (akcji gracza) -----*/
 
@@ -40,11 +45,11 @@ pickScissors.addEventListener('click', function() { playerPick('scissors') });
 // Początkowe wartości zmiennych: status gry, gracz, komputer
 
 var gameState = 'notStarted',  //started // ended
-    player = {
+		player = {
 			name: '',
 			score: 0
-    },
-    computer = {
+		},
+		computer = {
 			score: 0
 		};
 		
@@ -54,26 +59,28 @@ var gameState = 'notStarted',  //started // ended
 // Wyświetla poszczególne elementy gry/strony zależnie od 'statusu gry' (zaczęta, skończona, nie rozpoczęta)
 
 function setGameElements() {
-  switch(gameState) {
-    case 'started':
+	switch(gameState) {
+		case 'started':
 			newGameElem.style.display = 'none';
 			pickElem.style.display = 'block';
 			resultsElem.style.display = 'block';
-      break;
-    case 'ended':
+			break;
+		case 'ended':
 			newGameBtn.innerText = 'Jeszcze raz';
-    case 'notStarted':
-    default:
+			resetGame();
+
+		case 'notStarted':
+		default:
 			newGameElem.style.display = 'block';
 			pickElem.style.display = 'none';
 			resultsElem.style.display = 'none';
-  }
+	}
 }
 
 setGameElements(); // Funkcja wykonuje się zaraz po wejściu na stronę
 
 
-/*----- Rozpoczęcie gry (click.newGameBtn) -----*/
+/*----- Rozpoczęcie/reset gry (click.newGameBtn) -----*/
 		
 function newGame() {
 	player.name = prompt('Please enter your name', 'imię gracza');
@@ -81,12 +88,24 @@ function newGame() {
 	if (player.name) {
 		playerNameElem.innerHTML = player.name;
 
-		player.score = computer.score = 0;
 		gameState = 'started';
 
+		resetGame();
 		setGamePoints();
 		setGameElements();
 	}
+}
+
+// Resetuje grę
+
+function resetGame() {
+	player.score = computer.score = 0;
+
+	playerResultElem.innerHTML = defaultPlayerResultText;
+	computerResultElem.innerHTML = defaultComputerResultText;
+
+	playerResultElem.className = computerResultElem.className = 'base-res start-res';
+	remisResultElem.className = '';
 }
 
 // Ustaw/wyświetl punkty. Pełni funkcje wyzerowania punktów przed kolejną rozgrywką.
@@ -122,7 +141,7 @@ function getComputerPick() {
 // Sprawdza kto wygrał rundę
 
 function checkRoundWinner(playerPick, computerPick) {
-	playerResultElem.innerHTML = computerResultElem.innerHTML = '';
+	playerResultElem.innerHTML = computerResultElem.innerHTML = remisResultElem.innerHTML = '';
 	
 	var winnerIs;
 
@@ -137,7 +156,7 @@ function checkRoundWinner(playerPick, computerPick) {
 		winnerIs = 'computer';
 
 	} else {
-		winnerIs = 'player'
+		winnerIs = 'player';
 	}
 
 	setWinner(winnerIs);
@@ -147,20 +166,30 @@ function checkRoundWinner(playerPick, computerPick) {
 
 function setWinner(winnerIs) {
 	if (winnerIs == 'noone') {
-		remisResultElem.innerHTML = "Remis!";
-
+		remisResultElem.innerHTML = 'Remis!';
+		
+		resultStyle('remis');
+		
 	} else if (winnerIs == 'computer') {
-		computerResultElem.innerHTML = "Win!";
+		computerResultElem.innerHTML = 'Win!';
 		computer.score++;
 
+		playerResultElem.innerHTML = 'Lose :(';
+
+		resultStyle('computer')
+
 	}	else {
-		playerResultElem.innerHTML = "Win!";
+		playerResultElem.innerHTML = 'Win!';
 		player.score++;
+
+		computerResultElem.innerHTML = 'Lose :(';
+
+		resultStyle('player');
 	}
 
-	consoleLog();
 	setGamePoints(); // Aktualizuje liczbę zdobytych punktów
-	isGameEnd();
+	isGameEnd(); // Sprawdza, czy gra jest już skończona
+	consoleLog(); // Wyświetla logi w konsoli
 }
 
 // Liczy punkty
@@ -178,6 +207,28 @@ function isGameEnd(winnerIs) {
 	}
 }
 
+// Ustawia klasy dla elementu z wynikiem rundy ('result')
+
+function resultStyle(result) {
+
+	playerResultElem.className = computerResultElem.className = remisResultElem.className = 'base-res';
+
+	switch(result) {
+		case 'remis':
+			remisResultElem.className = 'base-res remis';
+			break;
+		case 'computer':
+			computerResultElem.className = 'base-res win';
+			playerResultElem.className = 'base-res lose';
+			break;
+		case 'player':
+			playerResultElem.className = 'base-res win';
+			computerResultElem.className = 'base-res lose';
+			break;
+	}
+}
+
+// Logi w konsoli
 
 function consoleLog() {
 	console.log(player.name + ": " + player.score + " --- Computer: " + computer.score);
